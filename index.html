@@ -58,6 +58,7 @@
               <h1 class="font-bold text-base sm:text-lg tracking-tight leading-tight">GREEN VIEW PUBLIC MISSION</h1>
               <p class="text-xs text-green-200 hidden sm:block">Maharaj Nagar, Haripur, Pukhuria, Malda, West Bengal</p>
             </div>
+            <span id="firebase-connection-status" class="ml-2 text-[10px] sm:text-xs bg-amber-100 text-amber-900 px-2 py-1 rounded-full font-semibold" role="status">Firebase সংযোগ পরীক্ষা হচ্ছে…</span>
           </div>
 
           <div class="flex items-center gap-2 sm:gap-4">
@@ -966,13 +967,7 @@
   <!-- JAVASCRIPT STATE ENGINE -->
   <script>
     const defaultData = {
-      students: [
-        { id: "GV-STU-001", admissionNo: "GV-2026-001", rollNo: "101", name: "Rahul Das", className: "Class V", section: "A", fatherName: "Alok Das", guardianMobile: "+91 98321 11223", address: "Maharaj Nagar, Haripur, Pukhuria, Malda", photoUrl: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200", status: "Active" },
-        { id: "GV-STU-002", admissionNo: "GV-2026-002", rollNo: "102", name: "Ananya Mukherjee", className: "Class V", section: "A", fatherName: "Debashis Mukherjee", guardianMobile: "+91 98321 44556", address: "Pukhuria Bazar, Malda", photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200", status: "Active" },
-        { id: "GV-STU-003", admissionNo: "GV-2026-003", rollNo: "103", name: "Subhadip Sen", className: "Class V", section: "A", fatherName: "Pranab Sen", guardianMobile: "+91 98321 77889", address: "Haripur Main Road, Malda", photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200", status: "Active" },
-        { id: "GV-STU-004", admissionNo: "GV-2026-004", rollNo: "201", name: "Riya Ghosh", className: "Class VI", section: "B", fatherName: "Swapan Ghosh", guardianMobile: "+91 98321 99112", address: "Samsi Station Road, Malda", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200", status: "Active" },
-        { id: "GV-STU-005", admissionNo: "GV-2026-005", rollNo: "301", name: "Aman Ali", className: "Class VII", section: "A", fatherName: "Rafiqul Ali", guardianMobile: "+91 98321 33441", address: "Chanchal Road, Malda", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200", status: "Active" }
-      ],
+      students: [],
       subjects: [
         { id: "SUB-BEN", name: "Bengali (1st Lang)", code: "BEN", fullMarks: 100, passMarks: 33, teacherName: "A. Banerjee" },
         { id: "SUB-ENG", name: "English (2nd Lang)", code: "ENG", fullMarks: 100, passMarks: 33, teacherName: "P. Sen" },
@@ -1070,9 +1065,13 @@
 
       const filtered = cloudStore.students.filter(s => {
         const matchesClass = (cls === 'All') || (s.className === cls);
-        const matchesQuery = s.name.toLowerCase().includes(q) || s.admissionNo.toLowerCase().includes(q) || s.rollNo.includes(q);
+        const matchesQuery = String(s.name || '').toLowerCase().includes(q) || String(s.admissionNo || '').toLowerCase().includes(q) || String(s.rollNo || '').includes(q);
         return matchesClass && matchesQuery;
       });
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="py-8 px-4 text-center text-slate-500">${cloudStore.students.length ? 'কোনো ছাত্রছাত্রীর তথ্য মেলেনি।' : 'Firebase থেকে ছাত্রছাত্রীর তথ্য আসেনি। সংযোগ/নিরাপত্তা নিয়ম পরীক্ষা করুন।'}</td></tr>`;
+        return;
+      }
 
       tbody.innerHTML = filtered.map(s => `
         <tr class="hover:bg-slate-50">
@@ -1368,6 +1367,8 @@
 
     function handleSaveStudent(e) {
       e.preventDefault();
+      alert("নিরাপত্তার জন্য ওয়েব থেকে ছাত্র যোগ করা আপাতত বন্ধ। Firebase Authentication ও নিরাপদ Rules সেট করার পর এটি চালু করতে হবে।");
+      return;
       const newS = {
         id: "GV-STU-" + Date.now().toString().slice(-4),
         admissionNo: document.getElementById('m-adm-no').value,
@@ -1456,6 +1457,8 @@
     }
 
     function deleteStudentWeb(id) {
+      alert("নিরাপত্তার জন্য ওয়েব থেকে ছাত্র মুছে ফেলা বন্ধ। Firebase Authentication ও নিরাপদ Rules সেট করার পর এটি চালু করতে হবে।");
+      return;
       if (!confirm("Are you sure you want to remove this student?")) return;
       cloudStore.students = cloudStore.students.filter(x => x.id !== id);
       addLog("admin01", "Removed student ID " + id, "Students");
@@ -1488,6 +1491,50 @@
     window.addEventListener('DOMContentLoaded', () => {
       updateDashboardStats();
     });
+    window.addEventListener('gvpm-firebase-status', (e) => {
+      const el = document.getElementById('firebase-connection-status');
+      if (!el) return;
+      el.textContent = e.detail?.text || 'Firebase status অজানা';
+      el.className = 'ml-2 text-[10px] sm:text-xs px-2 py-1 rounded-full font-semibold ' + (e.detail?.ok ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900');
+    });
+    window.addEventListener('gvpm-firestore-students', (e) => {
+      cloudStore.students = Array.isArray(e.detail?.students) ? e.detail.students : [];
+      try { renderStudentsTable(); updateDashboardStats(); } catch (err) { console.warn('UI refresh:', err); }
+      window.dispatchEvent(new CustomEvent('gvpm-firebase-status', {detail:{ok:true,text:`Firestore connected • ${cloudStore.students.length} students (read-only)`}}));
+    });
+  </script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    // Project details taken from the Android google-services.json in the supplied source ZIP.
+    // This is a read-only connection; it never writes or deletes Firestore data.
+    const firebaseConfig = {
+      apiKey: 'AIzaSyCzn2M5t4sc8vIvQXWRyag8LU-c6k4PvHI',
+      authDomain: 'my-school-erp-7edf8.firebaseapp.com',
+      projectId: 'my-school-erp-7edf8',
+      storageBucket: 'my-school-erp-7edf8.firebasestorage.app',
+      messagingSenderId: '197706451904',
+      appId: '1:197706451904:android:4edd23c9bc935a5f51d625'
+    };
+    try {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      onSnapshot(collection(db, 'students'), (snapshot) => {
+        const students = snapshot.docs.map(doc => {
+          const d = doc.data();
+          return { id: d.id || doc.id, admissionNo: d.admissionNo || '', rollNo: String(d.rollNo || ''), name: d.name || '', className: d.className || 'Class V', section: d.section || 'A', fatherName: d.fatherName || '', guardianMobile: d.guardianMobile || '', address: d.address || '', photoUrl: d.photoUrl || '', status: d.status || 'Active' };
+        });
+        window.dispatchEvent(new CustomEvent('gvpm-firestore-students', {detail:{students}}));
+      }, (error) => {
+        console.error('Firestore students listener failed:', error);
+        window.dispatchEvent(new CustomEvent('gvpm-firebase-status', {detail:{ok:false,text:'Firebase read blocked: ' + (error.code || error.message || 'unknown error')}}));
+        window.dispatchEvent(new CustomEvent('gvpm-firestore-students', {detail:{students:[]}}));
+      });
+    } catch (error) {
+      console.error('Firebase initialization failed:', error);
+      window.dispatchEvent(new CustomEvent('gvpm-firebase-status', {detail:{ok:false,text:'Firebase init failed: ' + (error.message || 'unknown error')}}));
+      window.dispatchEvent(new CustomEvent('gvpm-firestore-students', {detail:{students:[]}}));
+    }
   </script>
 </body>
 </html>
