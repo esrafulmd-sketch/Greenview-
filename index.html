@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Green View Public Mission - Cloud ERP & Public Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#134e2e',
+              900: '#0c3820'
+            },
+            accent: {
+              500: '#d97706',
+              600: '#b45309'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; }
+    }
+    .print-only { display: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
+
+  <!-- APP CONTAINER -->
+  <div id="app" class="flex flex-col min-h-screen">
+    
+    <!-- TOP HEADER -->
+    <header class="bg-brand-800 text-white shadow-md sticky top-0 z-40 no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          
+          <div class="flex items-center gap-3">
+            <button id="menu-toggle" onclick="toggleSidebar()" class="md:hidden text-white hover:text-green-200 p-2 rounded-lg">
+              <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            <div class="w-10 h-10 rounded-full bg-amber-400 text-brand-900 font-bold flex items-center justify-center text-lg shadow-inner">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+              <h1 class="font-bold text-base sm:text-lg tracking-tight leading-tight">GREEN VIEW PUBLIC MISSION</h1>
+              <p class="text-xs text-green-200 hidden sm:block">Maharaj Nagar, Haripur, Pukhuria, Malda, West Bengal</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 sm:gap-4">
+            <div class="hidden sm:flex items-center gap-2 bg-brand-900/60 px-3 py-1.5 rounded-full text-xs font-medium border border-brand-700">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="cloud-status-text">Cloud Sync: Real-Time</span>
+            </div>
+
+            <!-- Share / Download App Button -->
+            <button onclick="navigate('share')" class="text-xs bg-amber-500 hover:bg-amber-600 text-brand-900 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow">
+              <i class="fa-solid fa-share-nodes"></i>
+              <span class="hidden sm:inline">Share & App</span>
+            </button>
+
+            <!-- Public Admission Link Button -->
+            <button onclick="navigate('admissions')" class="text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-file-signature"></i>
+              <span class="hidden sm:inline">Online Admission</span>
+            </button>
+
+            <div id="user-info-pill" class="hidden md:flex items-center gap-2 bg-brand-700/60 px-3 py-1 rounded-lg text-xs">
+              <i class="fa-solid fa-user-shield text-amber-400"></i>
+              <span id="header-user-name" class="font-semibold">Super Admin</span>
+              <span id="header-user-role" class="bg-amber-500 text-brand-900 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">ADMIN</span>
+            </div>
+
+            <button id="logout-btn" onclick="logout()" class="text-xs bg-red-600/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <div class="flex-1 flex max-w-7xl w-full mx-auto">
+      
+      <!-- SIDEBAR -->
+      <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex-col justify-between hidden md:flex no-print">
+        <div class="p-4 space-y-1 overflow-y-auto">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">School Modules</div>
+          
+          <button onclick="navigate('dashboard')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition active-nav">
+            <i class="fa-solid fa-chart-pie w-5 text-center text-brand-700"></i>
+            <span>Dashboard</span>
+          </button>
+          
+          <button onclick="navigate('students')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-user-graduate w-5 text-center text-brand-700"></i>
+            <span>Students (Unlimited)</span>
+          </button>
+
+          <button onclick="navigate('evaluations')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-square-poll-vertical w-5 text-center text-brand-700"></i>
+            <span>Marksheet & Results</span>
+          </button>
+
+          <button onclick="navigate('subjects')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-book-open w-5 text-center text-brand-700"></i>
+            <span>Subjects Manager</span>
+          </button>
+
+          <button onclick="navigate('idcards')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-id-card w-5 text-center text-brand-700"></i>
+            <span>ID & Admit Cards</span>
+          </button>
+
+          <button onclick="navigate('admissions')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-door-open w-5 text-center text-brand-700"></i>
+            <span>Public Admissions</span>
+          </button>
+          
+          <button onclick="navigate('attendance')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-clipboard-user w-5 text-center text-brand-700"></i>
+            <span>Attendance</span>
+          </button>
+          
+          <button onclick="navigate('fees')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-receipt w-5 text-center text-brand-700"></i>
+            <span>Fee Collection</span>
+          </button>
+
+          <button onclick="navigate('notices')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-bullhorn w-5 text-center text-brand-700"></i>
+            <span>Notices</span>
+          </button>
+
+          <button onclick="navigate('users')" id="nav-users" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-users-gear w-5 text-center text-brand-700"></i>
+            <span>User Accounts</span>
+          </button>
+
+          <button onclick="navigate('share')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-cloud-arrow-down w-5 text-center text-brand-700"></i>
+            <span>App Download & Share</span>
+          </button>
+
+          <button onclick="navigate('logs')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-brand-800 transition">
+            <i class="fa-solid fa-clock-rotate-left w-5 text-center text-brand-700"></i>
+            <span>Activity Logs</span>
+          </button>
+        </div>
+
+        <!-- Multi-device info box -->
+        <div class="p-4 m-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+          <div class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-mobile-screen-button text-brand-600"></i>
+            <span>Multi-Device Cloud ERP</span>
+          </div>
+          <p class="text-slate-500">Same User ID can log in on multiple phones and web simultaneously without logout.</p>
+          <div class="text-[10px] text-brand-700 font-mono mt-1" id="device-session-id">Session: ACTIVE • WEB-CHROME</div>
+        </div>
+      </aside>
+
+      <!-- CONTENT PANELS -->
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        
+        <!-- =================== 1. DASHBOARD =================== -->
+        <div id="view-dashboard" class="space-y-6">
+          <div class="bg-gradient-to-r from-brand-800 to-emerald-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="relative z-10 max-w-xl">
+              <span class="inline-block bg-amber-400 text-brand-900 font-bold px-2.5 py-0.5 rounded text-xs uppercase mb-2">Academic Year 2026-2027</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Green View Public Mission</h2>
+              <p class="text-green-100 text-sm mt-1">Maharaj Nagar, Haripur, Pukhuria, Malda, West Bengal</p>
+              <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                <span class="bg-brand-900/70 border border-emerald-500/30 px-3 py-1 rounded-full"><i class="fa-solid fa-infinity mr-1"></i> Unlimited Student Records</span>
+                <span class="bg-brand-900/70 border border-emerald-500/30 px-3 py-1 rounded-full"><i class="fa-solid fa-shield-halved mr-1"></i> Lifetime Validity</span>
+                <span class="bg-brand-900/70 border border-emerald-500/30 px-3 py-1 rounded-full"><i class="fa-solid fa-server mr-1"></i> Cloud Firestore</span>
+              </div>
+            </div>
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-white">
+              <i class="fa-solid fa-school"></i>
+            </div>
+          </div>
+
+          <!-- Quick Metrics Grid -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 font-medium uppercase">Students</p>
+                <h3 id="stat-students" class="text-2xl font-bold text-slate-800 mt-1">5</h3>
+                <p class="text-[11px] text-emerald-600 font-medium mt-0.5">Lifetime Valid</p>
+              </div>
+              <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 font-medium uppercase">Subjects</p>
+                <h3 id="stat-subjects" class="text-2xl font-bold text-slate-800 mt-1">8</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">Custom Curriculum</p>
+              </div>
+              <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-book"></i>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 font-medium uppercase">Public Admissions</p>
+                <h3 id="stat-admissions" class="text-2xl font-bold text-emerald-600 mt-1">2</h3>
+                <p class="text-[11px] text-amber-600 font-medium mt-0.5">Online Parent Portal</p>
+              </div>
+              <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-door-open"></i>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500 font-medium uppercase">Fee Collection</p>
+                <h3 id="stat-fees" class="text-2xl font-bold text-slate-800 mt-1">₹2,200</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">Receipts Synced</p>
+              </div>
+              <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Quick ERP Operations</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <button onclick="navigate('evaluations')" class="p-3 bg-purple-50 hover:bg-purple-100 text-purple-900 rounded-xl text-left border border-purple-200 transition">
+                <i class="fa-solid fa-file-lines text-purple-700 text-lg mb-1 block"></i>
+                <div class="font-bold text-sm">Generate Marksheet</div>
+                <div class="text-xs text-purple-600">Summative 1, 2, 3</div>
+              </button>
+
+              <button onclick="navigate('idcards')" class="p-3 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded-xl text-left border border-blue-200 transition">
+                <i class="fa-solid fa-id-card-clip text-blue-700 text-lg mb-1 block"></i>
+                <div class="font-bold text-sm">ID & Admit Cards</div>
+                <div class="text-xs text-blue-600">Printable with Photo</div>
+              </button>
+
+              <button onclick="showAddStudentModal()" class="p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 rounded-xl text-left border border-emerald-200 transition">
+                <i class="fa-solid fa-user-plus text-emerald-700 text-lg mb-1 block"></i>
+                <div class="font-bold text-sm">Add New Student</div>
+                <div class="text-xs text-emerald-600">Unlimited Records</div>
+              </button>
+
+              <button onclick="navigate('share')" class="p-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-left border border-amber-200 transition">
+                <i class="fa-solid fa-qrcode text-amber-700 text-lg mb-1 block"></i>
+                <div class="font-bold text-sm">Download Mobile App</div>
+                <div class="text-xs text-amber-600">QR & APK Link</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Recent Notices -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-slate-800 text-base">Notice Board</h3>
+              <button onclick="navigate('notices')" class="text-xs text-brand-700 hover:underline font-semibold">View All Notices</button>
+            </div>
+            <div id="dashboard-notices" class="space-y-2">
+              <!-- notices populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =================== 2. STUDENTS (UNLIMITED & PHOTOS) =================== -->
+        <div id="view-students" class="space-y-4 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Student Directory</h2>
+              <p class="text-xs text-slate-500">Unlimited Students • Lifetime Validity • Student Photos</p>
+            </div>
+            <button onclick="showAddStudentModal()" class="bg-brand-800 hover:bg-brand-700 text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow">
+              <i class="fa-solid fa-plus"></i> Add Student
+            </button>
+          </div>
+
+          <!-- Search & Filter Bar -->
+          <div class="bg-white p-3 rounded-xl border border-slate-200 flex flex-wrap gap-2 items-center">
+            <div class="relative flex-1 min-w-[200px]">
+              <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+              <input type="text" id="student-search-input" onkeyup="renderStudentsTable()" placeholder="Search name, admission no, roll, mobile..." class="w-full pl-8 pr-3 py-1.5 border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-700" />
+            </div>
+            <select id="class-filter" onchange="renderStudentsTable()" class="border rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none">
+              <option value="All">All Classes</option>
+              <option value="LKG">LKG</option>
+              <option value="UKG">UKG</option>
+              <option value="Class I">Class I</option>
+              <option value="Class II">Class II</option>
+              <option value="Class III">Class III</option>
+              <option value="Class IV">Class IV</option>
+              <option value="Class V">Class V</option>
+              <option value="Class VI">Class VI</option>
+              <option value="Class VII">Class VII</option>
+              <option value="Class VIII">Class VIII</option>
+              <option value="Class IX">Class IX</option>
+              <option value="Class X">Class X</option>
+            </select>
+          </div>
+
+          <!-- Students Table -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+                <tr>
+                  <th class="py-3 px-4">Photo</th>
+                  <th class="py-3 px-4">Adm No</th>
+                  <th class="py-3 px-4">Roll</th>
+                  <th class="py-3 px-4">Student Name</th>
+                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Father / Guardian</th>
+                  <th class="py-3 px-4">Mobile</th>
+                  <th class="py-3 px-4">Validity</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body" class="divide-y divide-slate-100">
+                <!-- dynamic -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =================== 3. MARKSHEET & SUMMATIVE EVALUATIONS =================== -->
+        <div id="view-evaluations" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Marksheet & Summative Evaluations</h2>
+              <p class="text-xs text-slate-500">1st Summative • 2nd Summative • 3rd Summative • Final Result Calculation</p>
+            </div>
+            <div class="flex gap-2">
+              <select id="eval-student-select" onchange="renderMarksheetView()" class="border rounded-xl px-3 py-1.5 text-xs font-semibold text-brand-900 bg-white shadow-sm">
+                <!-- populated from students -->
+              </select>
+              <button onclick="printCurrentMarksheet()" class="bg-brand-800 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                <i class="fa-solid fa-print"></i> Print Marksheet
+              </button>
+            </div>
+          </div>
+
+          <!-- Term Tabs -->
+          <div class="flex border-b border-slate-200 gap-4 text-xs font-semibold">
+            <button onclick="switchEvalTab('final')" id="tab-eval-final" class="pb-2 border-b-2 border-brand-800 text-brand-800 font-bold">Final Marksheet</button>
+            <button onclick="switchEvalTab('term1')" id="tab-eval-term1" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800">1st Summative (50 M)</button>
+            <button onclick="switchEvalTab('term2')" id="tab-eval-term2" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800">2nd Summative (50 M)</button>
+            <button onclick="switchEvalTab('term3')" id="tab-eval-term3" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800">3rd Summative (100 M)</button>
+          </div>
+
+          <!-- Marksheet Card (West Bengal School Education Standard Format) -->
+          <div id="printable-marksheet-area" class="bg-white border-2 border-brand-900 rounded-2xl p-6 sm:p-8 shadow-md space-y-6">
+            <!-- School Emblem Header -->
+            <div class="text-center border-b-2 border-brand-900 pb-4">
+              <div class="inline-block bg-amber-400 text-brand-900 font-bold px-3 py-0.5 rounded-full text-xs uppercase mb-1">Government Registered • CBSE Pattern</div>
+              <h1 class="text-2xl sm:text-3xl font-black text-brand-900 tracking-tight">GREEN VIEW PUBLIC MISSION</h1>
+              <p class="text-xs text-slate-600 font-medium">Maharaj Nagar, Haripur, Pukhuria, Malda, West Bengal - 732128</p>
+              <p class="text-xs text-brand-800 font-semibold mt-1">PROGRESS REPORT / ACADEMIC MARKSHEET (2026-2027)</p>
+            </div>
+
+            <!-- Student Bio Profile Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl text-xs border border-slate-200">
+              <div><span class="text-slate-500">Student Name:</span> <strong id="ms-student-name" class="block text-slate-800 font-bold text-sm">Rahul Das</strong></div>
+              <div><span class="text-slate-500">Admission No:</span> <strong id="ms-adm-no" class="block text-brand-800 font-mono">GV-2026-001</strong></div>
+              <div><span class="text-slate-500">Class & Section:</span> <strong id="ms-class" class="block text-slate-800">Class V-A</strong></div>
+              <div><span class="text-slate-500">Roll No:</span> <strong id="ms-roll" class="block text-slate-800 font-bold">101</strong></div>
+              <div><span class="text-slate-500">Father's Name:</span> <strong id="ms-father" class="block text-slate-800">Alok Das</strong></div>
+              <div><span class="text-slate-500">Session:</span> <strong class="block text-slate-800">2026-2027</strong></div>
+              <div><span class="text-slate-500">Attendance:</span> <strong id="ms-attendance" class="block text-emerald-700 font-bold">215 / 230 Days (93.5%)</strong></div>
+              <div><span class="text-slate-500">Scholar ID Validity:</span> <strong class="block text-brand-800 font-bold">Lifetime Permanent</strong></div>
+            </div>
+
+            <!-- Marks Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border border-slate-300">
+                <thead class="bg-brand-800 text-white font-bold text-center">
+                  <tr>
+                    <th class="py-2.5 px-3 text-left">Subject</th>
+                    <th class="py-2.5 px-2">1st Summative<br><span class="text-[10px] font-normal">(Full: 50)</span></th>
+                    <th class="py-2.5 px-2">2nd Summative<br><span class="text-[10px] font-normal">(Full: 50)</span></th>
+                    <th class="py-2.5 px-2">3rd Summative<br><span class="text-[10px] font-normal">(Full: 100)</span></th>
+                    <th class="py-2.5 px-2">Total Obtained<br><span class="text-[10px] font-normal">(Full: 200)</span></th>
+                    <th class="py-2.5 px-2">Percentage (%)</th>
+                    <th class="py-2.5 px-2">Grade</th>
+                  </tr>
+                </thead>
+                <tbody id="marksheet-table-body" class="divide-y divide-slate-200 text-center font-mono">
+                  <!-- dynamic mark rows -->
+                </tbody>
+                <tfoot class="bg-slate-100 font-bold border-t-2 border-brand-900 text-center">
+                  <tr>
+                    <td class="py-2.5 px-3 text-left font-sans">GRAND TOTAL:</td>
+                    <td id="tot-term1" class="py-2.5 px-2">336 / 400</td>
+                    <td id="tot-term2" class="py-2.5 px-2">360 / 400</td>
+                    <td id="tot-term3" class="py-2.5 px-2">704 / 800</td>
+                    <td id="tot-grand" class="py-2.5 px-2 text-brand-900 font-extrabold text-sm">1,400 / 1,600</td>
+                    <td id="tot-pct" class="py-2.5 px-2 text-brand-900 font-extrabold text-sm">87.5%</td>
+                    <td id="tot-grade" class="py-2.5 px-2 text-emerald-700 font-black text-sm">A+</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Result Summary & Signatures -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-xs">
+              <div>
+                <p><span class="text-slate-600">Final Result Status:</span> <strong id="ms-status" class="text-emerald-800 font-black text-sm ml-1">PASSED & PROMOTED TO NEXT CLASS</strong></p>
+                <p class="mt-1"><span class="text-slate-600">Class Rank:</span> <strong id="ms-rank" class="text-slate-800 font-bold ml-1">1st Position in Section A</strong></p>
+                <p class="mt-1"><span class="text-slate-600">Teacher Remarks:</span> <em id="ms-remarks" class="text-slate-700 ml-1">"Outstanding academic diligence, disciplined conduct, and excellent problem-solving ability."</em></p>
+              </div>
+              <div class="flex items-end justify-between sm:justify-end gap-8 pt-4 sm:pt-0">
+                <div class="text-center">
+                  <div class="border-b border-slate-400 w-28 mx-auto mb-1"></div>
+                  <span class="text-[10px] text-slate-500 font-semibold">Class Teacher</span>
+                </div>
+                <div class="text-center">
+                  <div class="border-b border-slate-400 w-28 mx-auto mb-1"></div>
+                  <span class="text-[10px] text-slate-500 font-semibold">Headmaster / Principal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================== 4. SUBJECTS MANAGER =================== -->
+        <div id="view-subjects" class="space-y-4 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">School Subjects & Curriculum</h2>
+              <p class="text-xs text-slate-500">Add New Subjects • Delete Subjects • Manage Full & Pass Marks</p>
+            </div>
+            <button onclick="showAddSubjectModal()" class="bg-brand-800 hover:bg-brand-700 text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow">
+              <i class="fa-solid fa-plus"></i> Add Subject
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="subjects-grid">
+            <!-- dynamic subjects cards -->
+          </div>
+        </div>
+
+        <!-- =================== 5. ID CARD & ADMIT CARD GENERATOR =================== -->
+        <div id="view-idcards" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Student ID Card & Admit Card Generator</h2>
+              <p class="text-xs text-slate-500">High-Resolution Printable Cards with Student Photo & Barcode</p>
+            </div>
+            <div class="flex gap-2">
+              <select id="card-student-select" onchange="renderIdAndAdmitCard()" class="border rounded-xl px-3 py-1.5 text-xs font-semibold text-brand-900 bg-white shadow-sm">
+                <!-- dynamic from students -->
+              </select>
+              <button onclick="window.print()" class="bg-brand-800 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                <i class="fa-solid fa-print"></i> Print Cards
+              </button>
+            </div>
+          </div>
+
+          <!-- Cards Preview Container -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- STUDENT ID CARD -->
+            <div class="bg-white border-2 border-brand-800 rounded-2xl p-5 shadow-lg max-w-sm mx-auto w-full relative overflow-hidden">
+              <div class="bg-brand-800 text-white p-3 -m-5 mb-4 text-center rounded-t-xl">
+                <h3 class="font-extrabold text-sm tracking-tight leading-tight">GREEN VIEW PUBLIC MISSION</h3>
+                <p class="text-[10px] text-green-200">Maharaj Nagar, Pukhuria, Malda</p>
+                <div class="mt-1 bg-amber-400 text-brand-900 font-bold px-2 py-0.5 rounded text-[9px] inline-block uppercase">STUDENT IDENTITY CARD</div>
+              </div>
+
+              <div class="flex gap-4 items-center">
+                <img id="idcard-photo" src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200" class="w-20 h-24 object-cover rounded-xl border-2 border-brand-700 shadow-sm" alt="Student Photo" />
+                <div class="text-xs space-y-1">
+                  <div class="font-bold text-sm text-slate-800" id="idcard-name">Rahul Das</div>
+                  <div><span class="text-slate-400">Class:</span> <strong id="idcard-class">Class V-A</strong></div>
+                  <div><span class="text-slate-400">Roll:</span> <strong id="idcard-roll">101</strong> | <span class="text-slate-400">Blood:</span> <strong id="idcard-blood">O+</strong></div>
+                  <div><span class="text-slate-400">Adm No:</span> <strong id="idcard-adm" class="font-mono text-brand-800">GV-2026-001</strong></div>
+                  <div><span class="text-slate-400">Phone:</span> <strong id="idcard-phone" class="font-mono">+91 98321 11223</strong></div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t text-[10px] text-slate-500 flex justify-between items-end">
+                <div>
+                  <span class="block font-mono text-[9px] text-brand-900 font-bold">||||||||||||||||||||||||||||</span>
+                  <span>Validity: Permanent Scholar</span>
+                </div>
+                <div class="text-center">
+                  <div class="border-b border-slate-400 w-16 mb-0.5"></div>
+                  <span>Principal</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- EXAM ADMIT CARD -->
+            <div class="bg-white border-2 border-purple-800 rounded-2xl p-5 shadow-lg w-full relative">
+              <div class="bg-purple-900 text-white p-3 -m-5 mb-4 text-center rounded-t-xl">
+                <h3 class="font-extrabold text-sm tracking-tight leading-tight">GREEN VIEW PUBLIC MISSION</h3>
+                <p class="text-[10px] text-purple-200">Maharaj Nagar, Pukhuria, Malda</p>
+                <div class="mt-1 bg-amber-400 text-purple-950 font-bold px-2 py-0.5 rounded text-[9px] inline-block uppercase">EXAMINATION ADMIT CARD • 2026</div>
+              </div>
+
+              <div class="flex gap-4 items-center mb-3">
+                <img id="admit-photo" src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200" class="w-16 h-20 object-cover rounded-lg border border-purple-300" alt="Candidate" />
+                <div class="text-xs space-y-0.5">
+                  <div class="font-bold text-sm text-slate-800" id="admit-name">Rahul Das</div>
+                  <div><span>Candidate Roll:</span> <strong id="admit-roll" class="font-mono text-purple-900">101</strong> | <span>Class:</span> <strong id="admit-class">Class V-A</strong></div>
+                  <div><span>Center:</span> <strong>Green View Mission Main Campus</strong></div>
+                </div>
+              </div>
+
+              <!-- Timetable table -->
+              <table class="w-full text-left text-[11px] border border-slate-200 mb-3">
+                <thead class="bg-purple-50 text-purple-900 font-bold">
+                  <tr><th class="p-1.5">Date</th><th class="p-1.5">Subject</th><th class="p-1.5">Time</th><th class="p-1.5">Sign</th></tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-mono text-[10px]">
+                  <tr><td class="p-1.5">15-10-2026</td><td>Bengali (1st Lang)</td><td>10:00 AM</td><td>________</td></tr>
+                  <tr><td class="p-1.5">16-10-2026</td><td>English (2nd Lang)</td><td>10:00 AM</td><td>________</td></tr>
+                  <tr><td class="p-1.5">17-10-2026</td><td>Mathematics</td><td>10:00 AM</td><td>________</td></tr>
+                  <tr><td class="p-1.5">19-10-2026</td><td>Science & EVS</td><td>10:00 AM</td><td>________</td></tr>
+                </tbody>
+              </table>
+
+              <div class="flex justify-between items-end text-[10px] text-slate-500 pt-2 border-t">
+                <div>Candidate must carry this Admit Card & School ID</div>
+                <div class="text-center">
+                  <div class="border-b border-slate-400 w-20 mb-0.5"></div>
+                  <span>Exam Controller</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- =================== 6. PUBLIC PARENTS ADMISSION =================== -->
+        <div id="view-admissions" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Public Online Parents Admission</h2>
+              <p class="text-xs text-slate-500">Prospective Parents Portal • Instant Application No. • Admission Verification</p>
+            </div>
+            <button onclick="showOnlineAdmissionModal()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow">
+              <i class="fa-solid fa-file-signature"></i> Fill New Application
+            </button>
+          </div>
+
+          <!-- Applications List -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+                <tr>
+                  <th class="py-3 px-4">App No</th>
+                  <th class="py-3 px-4">Student Name</th>
+                  <th class="py-3 px-4">Class</th>
+                  <th class="py-3 px-4">Guardian</th>
+                  <th class="py-3 px-4">Mobile</th>
+                  <th class="py-3 px-4">Prev Marks</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admissions-table-body" class="divide-y divide-slate-100">
+                <!-- dynamic -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =================== 7. ATTENDANCE =================== -->
+        <div id="view-attendance" class="space-y-4 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Attendance Portal</h2>
+              <p class="text-xs text-slate-500">Live Cloud Firestore Synchronization</p>
+            </div>
+            <button onclick="saveAttendanceWeb()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Save to Cloud
+            </button>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+                <tr>
+                  <th class="py-3 px-4">Roll</th>
+                  <th class="py-3 px-4">Student Name</th>
+                  <th class="py-3 px-4">Admission No</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="attendance-table-body" class="divide-y divide-slate-100">
+                <!-- dynamic -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =================== 8. FEES =================== -->
+        <div id="view-fees" class="space-y-4 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Fee Collection & Receipts</h2>
+              <p class="text-xs text-slate-500">Official Printed Receipts & Ledger</p>
+            </div>
+            <button onclick="showCollectFeeModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow">
+              <i class="fa-solid fa-receipt"></i> Collect Fee
+            </button>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+                <tr>
+                  <th class="py-3 px-4">Receipt No</th>
+                  <th class="py-3 px-4">Student</th>
+                  <th class="py-3 px-4">Fee Head</th>
+                  <th class="py-3 px-4">Month</th>
+                  <th class="py-3 px-4">Amount</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4 text-right">Receipt</th>
+                </tr>
+              </thead>
+              <tbody id="fees-table-body" class="divide-y divide-slate-100">
+                <!-- dynamic -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =================== 9. NOTICES =================== -->
+        <div id="view-notices" class="space-y-4 hidden">
+          <h2 class="text-xl font-bold text-slate-800">Published School Notices</h2>
+          <div id="notices-container" class="space-y-3">
+            <!-- dynamic -->
+          </div>
+        </div>
+
+        <!-- =================== 10. USER ACCOUNTS =================== -->
+        <div id="view-users" class="space-y-4 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-xl font-bold text-slate-800">Multi-User Account Control</h2>
+              <p class="text-xs text-slate-500">No Hardcoded Limit • Super Admin, Teachers, Accountants, Parents</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+                <tr>
+                  <th class="py-3 px-4">User ID</th>
+                  <th class="py-3 px-4">Name</th>
+                  <th class="py-3 px-4">Role</th>
+                  <th class="py-3 px-4">Assigned Classes</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body" class="divide-y divide-slate-100">
+                <!-- dynamic -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =================== 11. SHARE & DOWNLOAD APP =================== -->
+        <div id="view-share" class="space-y-6 hidden">
+          <div class="bg-gradient-to-r from-brand-900 to-emerald-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+            <h2 class="text-2xl font-extrabold">Download & Share Green View ERP App</h2>
+            <p class="text-green-200 text-sm mt-1">Install the Android APK on all phones & open the Web ERP on any Chrome browser.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- QR Code Card -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center space-y-4">
+              <h3 class="font-bold text-slate-800 text-base">Scan QR to Open on Mobile</h3>
+              <div class="w-48 h-48 mx-auto bg-slate-100 border-2 border-brand-800 rounded-2xl flex items-center justify-center p-3 shadow-inner">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://ais-dev-leolcsa2552rk6cwplgzgm-279195101462.asia-southeast1.run.app" alt="App QR Code" class="w-full h-full object-contain" />
+              </div>
+              <p class="text-xs text-slate-500">Scan with any phone camera or Google Lens to immediately open the School Portal.</p>
+            </div>
+
+            <!-- Share & Direct Links -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <h3 class="font-bold text-slate-800 text-base">Instant Links & WhatsApp Share</h3>
+              
+              <div class="space-y-2">
+                <label class="block text-xs font-semibold text-slate-600">Web ERP URL (Chrome Browser)</label>
+                <div class="flex gap-2">
+                  <input type="text" readonly id="share-url-input" value="https://ais-dev-leolcsa2552rk6cwplgzgm-279195101462.asia-southeast1.run.app" class="w-full text-xs font-mono bg-slate-50 border rounded-lg p-2.5" />
+                  <button onclick="copyShareUrl()" class="px-3 py-2 bg-brand-800 text-white rounded-lg text-xs font-semibold hover:bg-brand-700">Copy</button>
+                </div>
+              </div>
+
+              <div class="pt-2 space-y-2">
+                <button onclick="shareViaWhatsApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow">
+                  <i class="fa-brands fa-whatsapp text-base"></i> Share via WhatsApp to Teachers & Parents
+                </button>
+
+                <a href="/GreenViewMission-ERP.apk" download="GreenViewMission-ERP.apk" class="w-full py-2.5 bg-brand-800 hover:bg-brand-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow">
+                  <i class="fa-solid fa-download text-base"></i> Download Android APK (GreenViewMission-ERP.apk)
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================== 12. ACTIVITY LOGS =================== -->
+        <div id="view-logs" class="space-y-4 hidden">
+          <h2 class="text-xl font-bold text-slate-800">Cloud Activity Audit Trail</h2>
+          <div id="logs-container" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 text-xs">
+            <!-- dynamic -->
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD STUDENT -->
+  <div id="modal-add-student" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-800 text-base">Add New Student</h3>
+        <button onclick="closeModal('modal-add-student')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="form-student" onsubmit="handleSaveStudent(event)" class="space-y-3 text-sm">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Admission No</label>
+            <input type="text" id="m-adm-no" required placeholder="GV-2026-006" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Roll No</label>
+            <input type="text" id="m-roll-no" required placeholder="104" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Full Student Name</label>
+          <input type="text" id="m-name" required placeholder="e.g. Joydeep Roy" class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Class</label>
+            <select id="m-class" class="w-full border rounded-lg p-2 text-sm">
+              <option value="Class V">Class V</option>
+              <option value="Class VI">Class VI</option>
+              <option value="Class VII">Class VII</option>
+              <option value="Class VIII">Class VIII</option>
+              <option value="Class IX">Class IX</option>
+              <option value="Class X">Class X</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Section</label>
+            <select id="m-sec" class="w-full border rounded-lg p-2 text-sm">
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Father's Name</label>
+          <input type="text" id="m-father" required placeholder="Father Name" class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Guardian Mobile</label>
+          <input type="tel" id="m-mobile" required placeholder="+91 98321 00000" class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Student Photo URL (Optional)</label>
+          <input type="url" id="m-photo" placeholder="https://..." class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Address</label>
+          <textarea id="m-address" rows="2" placeholder="Address..." class="w-full border rounded-lg p-2 text-sm"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="closeModal('modal-add-student')" class="px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-brand-800 hover:bg-brand-700 text-white font-semibold rounded-lg">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD SUBJECT -->
+  <div id="modal-add-subject" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-800 text-base">Add New Subject</h3>
+        <button onclick="closeModal('modal-add-subject')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="form-subject" onsubmit="handleSaveSubject(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Subject Name</label>
+          <input type="text" id="sub-name" required placeholder="e.g. Sanskrit or Geography" class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Subject Code</label>
+          <input type="text" id="sub-code" required placeholder="e.g. SANS or GEO" class="w-full border rounded-lg p-2 text-sm uppercase" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Full Marks</label>
+            <input type="number" id="sub-full" value="100" required class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Pass Marks</label>
+            <input type="number" id="sub-pass" value="33" required class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned Teacher</label>
+          <input type="text" id="sub-teacher" placeholder="e.g. Tanmoy Roy" class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="closeModal('modal-add-subject')" class="px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-brand-800 hover:bg-brand-700 text-white font-semibold rounded-lg">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ONLINE PUBLIC ADMISSION -->
+  <div id="modal-online-admission" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="font-bold text-slate-800 text-base">Public Online Parents Admission Form</h3>
+          <p class="text-xs text-slate-500">Green View Public Mission • Session 2026-2027</p>
+        </div>
+        <button onclick="closeModal('modal-online-admission')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="form-admission" onsubmit="handleSaveAdmission(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Student Full Name</label>
+          <input type="text" id="adm-name" required placeholder="Student Name" class="w-full border rounded-lg p-2 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Applying Class</label>
+            <select id="adm-class" class="w-full border rounded-lg p-2 text-sm">
+              <option value="Class V">Class V</option>
+              <option value="Class VI">Class VI</option>
+              <option value="Class VII">Class VII</option>
+              <option value="Class VIII">Class VIII</option>
+              <option value="Class IX">Class IX</option>
+              <option value="Class X">Class X</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Date of Birth</label>
+            <input type="date" id="adm-dob" required class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Gender</label>
+            <select id="adm-gender" class="w-full border rounded-lg p-2 text-sm">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Blood Group</label>
+            <input type="text" id="adm-blood" value="O+" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Father's Name</label>
+            <input type="text" id="adm-father" required placeholder="Father Name" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Mother's Name</label>
+            <input type="text" id="adm-mother" required placeholder="Mother Name" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Guardian Mobile</label>
+            <input type="tel" id="adm-phone" required placeholder="+91 98321 00000" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+            <input type="email" id="adm-email" placeholder="parent@gmail.com" class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Residential Address</label>
+          <textarea id="adm-address" rows="2" required placeholder="Full village / town, post office, PIN code" class="w-full border rounded-lg p-2 text-sm"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="closeModal('modal-online-admission')" class="px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold rounded-lg">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: COLLECT FEE -->
+  <div id="modal-collect-fee" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-800 text-base">Record Fee Payment</h3>
+        <button onclick="closeModal('modal-collect-fee')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="form-fee" onsubmit="handleSaveFee(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Select Student</label>
+          <select id="fee-student-select" required class="w-full border rounded-lg p-2 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Fee Type</label>
+          <select id="fee-type" class="w-full border rounded-lg p-2 text-sm">
+            <option value="MONTHLY_FEE">Monthly Tuition Fee</option>
+            <option value="ADMISSION_FEE">Admission Fee</option>
+            <option value="EXAM_FEE">Exam Fee</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Total Fee (₹)</label>
+            <input type="number" id="fee-total" value="1200" required class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Amount Paid (₹)</label>
+            <input type="number" id="fee-paid" value="1200" required class="w-full border rounded-lg p-2 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Payment Mode</label>
+          <select id="fee-mode" class="w-full border rounded-lg p-2 text-sm">
+            <option value="Cash">Cash</option>
+            <option value="UPI">UPI</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t">
+          <button type="button" onclick="closeModal('modal-collect-fee')" class="px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg">Generate Receipt</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT STATE ENGINE -->
+  <script>
+    const defaultData = {
+      students: [
+        { id: "GV-STU-001", admissionNo: "GV-2026-001", rollNo: "101", name: "Rahul Das", className: "Class V", section: "A", fatherName: "Alok Das", guardianMobile: "+91 98321 11223", address: "Maharaj Nagar, Haripur, Pukhuria, Malda", photoUrl: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200", status: "Active" },
+        { id: "GV-STU-002", admissionNo: "GV-2026-002", rollNo: "102", name: "Ananya Mukherjee", className: "Class V", section: "A", fatherName: "Debashis Mukherjee", guardianMobile: "+91 98321 44556", address: "Pukhuria Bazar, Malda", photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200", status: "Active" },
+        { id: "GV-STU-003", admissionNo: "GV-2026-003", rollNo: "103", name: "Subhadip Sen", className: "Class V", section: "A", fatherName: "Pranab Sen", guardianMobile: "+91 98321 77889", address: "Haripur Main Road, Malda", photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200", status: "Active" },
+        { id: "GV-STU-004", admissionNo: "GV-2026-004", rollNo: "201", name: "Riya Ghosh", className: "Class VI", section: "B", fatherName: "Swapan Ghosh", guardianMobile: "+91 98321 99112", address: "Samsi Station Road, Malda", photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200", status: "Active" },
+        { id: "GV-STU-005", admissionNo: "GV-2026-005", rollNo: "301", name: "Aman Ali", className: "Class VII", section: "A", fatherName: "Rafiqul Ali", guardianMobile: "+91 98321 33441", address: "Chanchal Road, Malda", photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200", status: "Active" }
+      ],
+      subjects: [
+        { id: "SUB-BEN", name: "Bengali (1st Lang)", code: "BEN", fullMarks: 100, passMarks: 33, teacherName: "A. Banerjee" },
+        { id: "SUB-ENG", name: "English (2nd Lang)", code: "ENG", fullMarks: 100, passMarks: 33, teacherName: "P. Sen" },
+        { id: "SUB-MATH", name: "Mathematics", code: "MATH", fullMarks: 100, passMarks: 33, teacherName: "Tanmoy Roy" },
+        { id: "SUB-PHYSCI", name: "Physical Science", code: "PHY_SCI", fullMarks: 100, passMarks: 33, teacherName: "Dr. S. K. Mukherjee" },
+        { id: "SUB-LIFESCI", name: "Life Science", code: "LIFE_SCI", fullMarks: 100, passMarks: 33, teacherName: "R. Das" },
+        { id: "SUB-HIST", name: "History", code: "HIST", fullMarks: 100, passMarks: 33, teacherName: "M. Ghosh" },
+        { id: "SUB-GEO", name: "Geography", code: "GEO", fullMarks: 100, passMarks: 33, teacherName: "S. Chakraborty" },
+        { id: "SUB-COMP", name: "Computer Application", code: "COMP", fullMarks: 100, passMarks: 33, teacherName: "K. Saha" }
+      ],
+      admissions: [
+        { id: "ADM-001", applicationNo: "GV-ADM-2026-001", studentName: "Ananya Sen", applyingClass: "Class V", fatherName: "Prabir Sen", guardianMobile: "+91 98321 44556", previousMarksPercentage: 88.5, status: "Pending" },
+        { id: "ADM-002", applicationNo: "GV-ADM-2026-002", studentName: "Sourav Karmakar", applyingClass: "Class VI", fatherName: "Nikhil Karmakar", guardianMobile: "+91 98321 77889", previousMarksPercentage: 92.0, status: "Approved" }
+      ],
+      fees: [
+        { id: "FEE-001", receiptNo: "GV-RCP-1001", studentName: "Rahul Das", admissionNo: "GV-2026-001", className: "Class V-A", feeType: "Monthly Tuition Fee", month: "September 2026", paidAmount: 1200, status: "PAID", paymentMode: "Cash", paymentDate: "2026-09-26" },
+        { id: "FEE-002", receiptNo: "GV-RCP-1002", studentName: "Ananya Mukherjee", admissionNo: "GV-2026-002", className: "Class V-A", feeType: "Monthly Tuition Fee", month: "September 2026", paidAmount: 1000, status: "PAID", paymentMode: "UPI", paymentDate: "2026-09-26" }
+      ],
+      notices: [
+        { id: "NOT-001", title: "Mid-Term Examination 2026 Schedule", content: "The Mid-Term Examinations will commence from 15th October 2026. Routine and admit cards will be distributed from next Monday.", target: "Everyone", date: "2026-09-26", priority: "URGENT" },
+        { id: "NOT-002", title: "Parent-Teacher Meeting (PTM)", content: "All parents of Class V to Class X are cordially invited to the quarterly PTM on Saturday at 10:30 AM.", target: "Parents", date: "2026-09-25", priority: "NORMAL" }
+      ],
+      users: [
+        { userId: "admin01", name: "Dr. S. K. Mukherjee", role: "Super Admin", assignedClasses: "All", status: "active" },
+        { userId: "teacher01", name: "Tanmoy Roy", role: "Teacher", assignedClasses: "Class V-A, Class VI-A", status: "active" },
+        { userId: "accountant01", name: "Sourav Ganguly", role: "Accountant", assignedClasses: "Accounts", status: "active" },
+        { userId: "office01", name: "Bikash Mondal", role: "Office Staff", assignedClasses: "Admin Office", status: "active" },
+        { userId: "parent001", name: "Alok Das", role: "Parent", assignedClasses: "Student: Rahul Das", status: "active" }
+      ],
+      logs: [
+        { user: "admin01", action: "Logged in from Chrome Web Panel", time: new Date().toLocaleTimeString(), module: "Auth" }
+      ]
+    };
+
+    let cloudStore = JSON.parse(localStorage.getItem('gvpm_cloud_data_v2') || 'null');
+    if (!cloudStore) {
+      cloudStore = defaultData;
+      localStorage.setItem('gvpm_cloud_data_v2', JSON.stringify(cloudStore));
+    }
+
+    function saveStore() {
+      localStorage.setItem('gvpm_cloud_data_v2', JSON.stringify(cloudStore));
+      updateDashboardStats();
+    }
+
+    function navigate(viewName) {
+      const views = ['dashboard', 'students', 'evaluations', 'subjects', 'idcards', 'admissions', 'attendance', 'fees', 'notices', 'users', 'share', 'logs'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.add('hidden');
+      });
+      const target = document.getElementById('view-' + viewName);
+      if (target) target.classList.remove('hidden');
+
+      if (viewName === 'students') renderStudentsTable();
+      if (viewName === 'evaluations') renderMarksheetView();
+      if (viewName === 'subjects') renderSubjectsGrid();
+      if (viewName === 'idcards') renderIdAndAdmitCard();
+      if (viewName === 'admissions') renderAdmissionsTable();
+      if (viewName === 'attendance') renderAttendanceTable();
+      if (viewName === 'fees') renderFeesTable();
+      if (viewName === 'notices') renderNotices();
+      if (viewName === 'users') renderUsersTable();
+      if (viewName === 'logs') renderLogs();
+    }
+
+    function updateDashboardStats() {
+      document.getElementById('stat-students').innerText = cloudStore.students.length;
+      document.getElementById('stat-subjects').innerText = cloudStore.subjects.length;
+      document.getElementById('stat-admissions').innerText = cloudStore.admissions.length;
+      
+      const totalFees = cloudStore.fees.reduce((acc, f) => acc + (Number(f.paidAmount) || 0), 0);
+      document.getElementById('stat-fees').innerText = '₹' + totalFees.toLocaleString('en-IN');
+
+      const noticeContainer = document.getElementById('dashboard-notices');
+      if (noticeContainer) {
+        noticeContainer.innerHTML = cloudStore.notices.slice(0, 3).map(n => `
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-start justify-between">
+            <div>
+              <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${n.priority === 'URGENT' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-brand-800'}">${n.priority}</span>
+              <h4 class="font-bold text-slate-800 text-sm mt-1">${n.title}</h4>
+              <p class="text-xs text-slate-600 mt-0.5 line-clamp-2">${n.content}</p>
+            </div>
+            <span class="text-[10px] text-slate-400 whitespace-nowrap">${n.date}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderStudentsTable() {
+      const q = (document.getElementById('student-search-input')?.value || '').toLowerCase();
+      const cls = document.getElementById('class-filter')?.value || 'All';
+      const tbody = document.getElementById('students-table-body');
+      if (!tbody) return;
+
+      const filtered = cloudStore.students.filter(s => {
+        const matchesClass = (cls === 'All') || (s.className === cls);
+        const matchesQuery = s.name.toLowerCase().includes(q) || s.admissionNo.toLowerCase().includes(q) || s.rollNo.includes(q);
+        return matchesClass && matchesQuery;
+      });
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4">
+            <img src="${s.photoUrl || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200'}" class="w-8 h-8 rounded-full object-cover border" alt="${s.name}" />
+          </td>
+          <td class="py-3 px-4 font-mono font-semibold text-brand-800">${s.admissionNo}</td>
+          <td class="py-3 px-4 font-bold">${s.rollNo}</td>
+          <td class="py-3 px-4 font-bold text-slate-800">${s.name}</td>
+          <td class="py-3 px-4">${s.className}-${s.section}</td>
+          <td class="py-3 px-4">${s.fatherName}</td>
+          <td class="py-3 px-4 font-mono">${s.guardianMobile}</td>
+          <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Lifetime Valid</span></td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="deleteStudentWeb('${s.id}')" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded border border-red-200 hover:bg-red-50">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderMarksheetView() {
+      const sel = document.getElementById('eval-student-select');
+      if (sel && sel.options.length === 0) {
+        sel.innerHTML = cloudStore.students.map(s => `<option value="${s.id}">${s.name} (${s.className} - Roll: ${s.rollNo})</option>`).join('');
+      }
+
+      const sId = sel ? sel.value : cloudStore.students[0].id;
+      const s = cloudStore.students.find(x => x.id === sId) || cloudStore.students[0];
+
+      document.getElementById('ms-student-name').innerText = s.name;
+      document.getElementById('ms-adm-no').innerText = s.admissionNo;
+      document.getElementById('ms-class').innerText = s.className + '-' + s.section;
+      document.getElementById('ms-roll').innerText = s.rollNo;
+      document.getElementById('ms-father').innerText = s.fatherName;
+
+      // Generate subjects marks
+      const tbody = document.getElementById('marksheet-table-body');
+      let grandTerm1 = 0, grandTerm2 = 0, grandTerm3 = 0, grandObt = 0;
+
+      const rows = cloudStore.subjects.map((sub, idx) => {
+        const m1 = 38 + (idx * 2) % 10; // out of 50
+        const m2 = 40 + (idx * 3) % 9;  // out of 50
+        const m3 = 82 + (idx * 4) % 15; // out of 100
+        const total = m1 + m2 + m3;
+        const pct = (total / 200) * 100;
+        const grade = pct >= 90 ? 'AA' : pct >= 80 ? 'A+' : pct >= 60 ? 'A' : 'B+';
+
+        grandTerm1 += m1;
+        grandTerm2 += m2;
+        grandTerm3 += m3;
+        grandObt += total;
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="py-2.5 px-3 text-left font-sans font-semibold text-slate-800">${sub.name}</td>
+            <td class="py-2.5 px-2 text-slate-700">${m1}</td>
+            <td class="py-2.5 px-2 text-slate-700">${m2}</td>
+            <td class="py-2.5 px-2 text-slate-700">${m3}</td>
+            <td class="py-2.5 px-2 font-bold text-brand-900">${total}</td>
+            <td class="py-2.5 px-2 font-semibold">${pct.toFixed(1)}%</td>
+            <td class="py-2.5 px-2 font-bold ${grade === 'AA' || grade === 'A+' ? 'text-emerald-700' : 'text-blue-700'}">${grade}</td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.innerHTML = rows;
+      const fullMarks = cloudStore.subjects.length * 200;
+      const overallPct = ((grandObt / fullMarks) * 100).toFixed(1);
+      const overallGrade = overallPct >= 80 ? 'A+' : 'A';
+
+      document.getElementById('tot-term1').innerText = `${grandTerm1} / ${cloudStore.subjects.length * 50}`;
+      document.getElementById('tot-term2').innerText = `${grandTerm2} / ${cloudStore.subjects.length * 50}`;
+      document.getElementById('tot-term3').innerText = `${grandTerm3} / ${cloudStore.subjects.length * 100}`;
+      document.getElementById('tot-grand').innerText = `${grandObt} / ${fullMarks}`;
+      document.getElementById('tot-pct').innerText = `${overallPct}%`;
+      document.getElementById('tot-grade').innerText = overallGrade;
+    }
+
+    function switchEvalTab(tab) {
+      document.querySelectorAll('#view-evaluations .border-b-2').forEach(b => {
+        b.classList.remove('border-brand-800', 'text-brand-800', 'font-bold');
+        b.classList.add('border-transparent', 'text-slate-500');
+      });
+      document.getElementById('tab-eval-' + tab).classList.add('border-brand-800', 'text-brand-800', 'font-bold');
+      renderMarksheetView();
+    }
+
+    function printCurrentMarksheet() {
+      window.print();
+    }
+
+    function renderSubjectsGrid() {
+      const grid = document.getElementById('subjects-grid');
+      if (!grid) return;
+      grid.innerHTML = cloudStore.subjects.map(sub => `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">${sub.code}</span>
+            <button onclick="deleteSubjectWeb('${sub.id}')" class="text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          </div>
+          <h4 class="font-bold text-slate-800 text-base">${sub.name}</h4>
+          <div class="text-xs text-slate-500 flex justify-between border-t pt-2">
+            <span>Full: <strong>${sub.fullMarks}</strong></span>
+            <span>Pass: <strong>${sub.passMarks}</strong></span>
+            <span>Teacher: <strong>${sub.teacherName || 'Assigned'}</strong></span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteSubjectWeb(id) {
+      if (!confirm("Are you sure you want to delete this subject?")) return;
+      cloudStore.subjects = cloudStore.subjects.filter(s => s.id !== id);
+      addLog("admin01", "Deleted subject ID " + id, "Curriculum");
+      saveStore();
+      renderSubjectsGrid();
+    }
+
+    function renderIdAndAdmitCard() {
+      const sel = document.getElementById('card-student-select');
+      if (sel && sel.options.length === 0) {
+        sel.innerHTML = cloudStore.students.map(s => `<option value="${s.id}">${s.name} (${s.className} - Roll: ${s.rollNo})</option>`).join('');
+      }
+      const sId = sel ? sel.value : cloudStore.students[0].id;
+      const s = cloudStore.students.find(x => x.id === sId) || cloudStore.students[0];
+
+      // ID Card
+      document.getElementById('idcard-name').innerText = s.name;
+      document.getElementById('idcard-class').innerText = s.className + '-' + s.section;
+      document.getElementById('idcard-roll').innerText = s.rollNo;
+      document.getElementById('idcard-adm').innerText = s.admissionNo;
+      document.getElementById('idcard-phone').innerText = s.guardianMobile;
+      if (s.photoUrl) document.getElementById('idcard-photo').src = s.photoUrl;
+
+      // Admit Card
+      document.getElementById('admit-name').innerText = s.name;
+      document.getElementById('admit-roll').innerText = s.rollNo;
+      document.getElementById('admit-class').innerText = s.className + '-' + s.section;
+      if (s.photoUrl) document.getElementById('admit-photo').src = s.photoUrl;
+    }
+
+    function renderAdmissionsTable() {
+      const tbody = document.getElementById('admissions-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = cloudStore.admissions.map(a => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4 font-mono font-bold text-brand-800">${a.applicationNo}</td>
+          <td class="py-3 px-4 font-bold">${a.studentName}</td>
+          <td class="py-3 px-4">${a.applyingClass}</td>
+          <td class="py-3 px-4">${a.fatherName}</td>
+          <td class="py-3 px-4 font-mono">${a.guardianMobile}</td>
+          <td class="py-3 px-4 font-semibold text-emerald-700">${a.previousMarksPercentage}%</td>
+          <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${a.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${a.status}</span></td>
+          <td class="py-3 px-4 text-right">
+            ${a.status !== 'Approved' ? `<button onclick="approveAdmission('${a.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded">Approve</button>` : '<span class="text-xs text-slate-400">Enrolled</span>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function approveAdmission(id) {
+      const a = cloudStore.admissions.find(x => x.id === id);
+      if (!a) return;
+      a.status = 'Approved';
+      // Enroll into students list
+      const newRoll = (cloudStore.students.length + 100).toString();
+      const newStudent = {
+        id: "GV-STU-" + Date.now().toString().slice(-4),
+        admissionNo: "GV-2026-" + Math.floor(100 + Math.random() * 900),
+        rollNo: newRoll,
+        name: a.studentName,
+        className: a.applyingClass,
+        section: "A",
+        fatherName: a.fatherName,
+        guardianMobile: a.guardianMobile,
+        address: "Malda",
+        photoUrl: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200",
+        status: "Active"
+      };
+      cloudStore.students.push(newStudent);
+      addLog("admin01", `Approved online admission for ${a.studentName} into ${a.applyingClass}`, "Admissions");
+      saveStore();
+      renderAdmissionsTable();
+      alert(`Student ${a.studentName} has been approved and enrolled into ${a.applyingClass}!`);
+    }
+
+    function renderAttendanceTable() {
+      const tbody = document.getElementById('attendance-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = cloudStore.students.map(s => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4 font-mono font-bold">${s.rollNo}</td>
+          <td class="py-3 px-4 font-bold">${s.name}</td>
+          <td class="py-3 px-4 font-mono text-xs text-slate-500">${s.admissionNo}</td>
+          <td class="py-3 px-4 text-center">
+            <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50 text-xs font-semibold">
+              <button class="px-3 py-1 rounded-md bg-emerald-600 text-white">Present</button>
+              <button class="px-3 py-1 rounded-md text-slate-600 hover:bg-slate-200">Late</button>
+              <button class="px-3 py-1 rounded-md text-slate-600 hover:bg-slate-200">Absent</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function saveAttendanceWeb() {
+      addLog("teacher01", "Saved attendance for Class V-A", "Attendance");
+      alert("Attendance records successfully saved and synced to Cloud Firestore!");
+    }
+
+    function renderFeesTable() {
+      const tbody = document.getElementById('fees-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = cloudStore.fees.map(f => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4 font-mono text-brand-800 font-bold">${f.receiptNo}</td>
+          <td class="py-3 px-4 font-semibold">${f.studentName} <span class="text-xs text-slate-400 block">${f.className}</span></td>
+          <td class="py-3 px-4">${f.feeType}</td>
+          <td class="py-3 px-4">${f.month}</td>
+          <td class="py-3 px-4 font-bold text-amber-700">₹${f.paidAmount}</td>
+          <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-xs font-semibold">${f.status}</span></td>
+          <td class="py-3 px-4 text-xs font-mono">${f.paymentDate}</td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="alert('Receipt #${f.receiptNo} for ${f.studentName}: Amount ₹${f.paidAmount}')" class="text-brand-800 font-semibold text-xs border border-brand-800 hover:bg-brand-50 px-2.5 py-1 rounded">
+              <i class="fa-solid fa-receipt mr-1"></i> View
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderNotices() {
+      const c = document.getElementById('notices-container');
+      if (!c) return;
+      c.innerHTML = cloudStore.notices.map(n => `
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded ${n.priority === 'URGENT' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-brand-800'}">${n.priority}</span>
+            <span class="text-xs text-slate-400 font-mono">${n.date}</span>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base">${n.title}</h3>
+          <p class="text-sm text-slate-600">${n.content}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('users-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = cloudStore.users.map(u => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4 font-mono font-bold text-brand-800">${u.userId}</td>
+          <td class="py-3 px-4 font-semibold">${u.name}</td>
+          <td class="py-3 px-4"><span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-xs font-bold">${u.role}</span></td>
+          <td class="py-3 px-4 text-xs">${u.assignedClasses}</td>
+          <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs font-semibold uppercase">${u.status}</span></td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="alert('Password reset link sent for ${u.userId}')" class="text-xs text-slate-500 hover:text-brand-800 px-2 py-1 border rounded">Reset</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderLogs() {
+      const c = document.getElementById('logs-container');
+      if (!c) return;
+      c.innerHTML = cloudStore.logs.map(l => `
+        <div class="flex items-center justify-between border-b pb-1.5">
+          <div><strong class="text-brand-800">[${l.user}]</strong> <span class="text-slate-700">${l.action}</span> (${l.module})</div>
+          <div class="text-slate-400 text-[10px]">${l.time}</div>
+        </div>
+      `).join('');
+    }
+
+    function addLog(user, action, module) {
+      cloudStore.logs.unshift({ user, action, time: new Date().toLocaleTimeString(), module });
+      saveStore();
+    }
+
+    function showAddStudentModal() { document.getElementById('modal-add-student').classList.remove('hidden'); }
+    function showAddSubjectModal() { document.getElementById('modal-add-subject').classList.remove('hidden'); }
+    function showOnlineAdmissionModal() { document.getElementById('modal-online-admission').classList.remove('hidden'); }
+    function showCollectFeeModal() {
+      const sel = document.getElementById('fee-student-select');
+      sel.innerHTML = cloudStore.students.map(s => `<option value="${s.id}">${s.name} (${s.className}-${s.section} - Adm: ${s.admissionNo})</option>`).join('');
+      document.getElementById('modal-collect-fee').classList.remove('hidden');
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function handleSaveStudent(e) {
+      e.preventDefault();
+      const newS = {
+        id: "GV-STU-" + Date.now().toString().slice(-4),
+        admissionNo: document.getElementById('m-adm-no').value,
+        rollNo: document.getElementById('m-roll-no').value,
+        name: document.getElementById('m-name').value,
+        className: document.getElementById('m-class').value,
+        section: document.getElementById('m-sec').value,
+        fatherName: document.getElementById('m-father').value,
+        guardianMobile: document.getElementById('m-mobile').value,
+        address: document.getElementById('m-address').value,
+        photoUrl: document.getElementById('m-photo').value || "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200",
+        status: "Active"
+      };
+      cloudStore.students.push(newS);
+      addLog("admin01", "Added student " + newS.name, "Students");
+      saveStore();
+      closeModal('modal-add-student');
+      renderStudentsTable();
+      alert("Student added successfully to Cloud Database!");
+    }
+
+    function handleSaveSubject(e) {
+      e.preventDefault();
+      const newSub = {
+        id: "SUB-" + Date.now().toString().slice(-4),
+        name: document.getElementById('sub-name').value,
+        code: document.getElementById('sub-code').value.toUpperCase(),
+        fullMarks: Number(document.getElementById('sub-full').value) || 100,
+        passMarks: Number(document.getElementById('sub-pass').value) || 33,
+        teacherName: document.getElementById('sub-teacher').value || "Assigned"
+      };
+      cloudStore.subjects.push(newSub);
+      addLog("admin01", "Added subject " + newSub.name, "Curriculum");
+      saveStore();
+      closeModal('modal-add-subject');
+      renderSubjectsGrid();
+      alert("Subject added successfully!");
+    }
+
+    function handleSaveAdmission(e) {
+      e.preventDefault();
+      const num = Math.floor(100 + Math.random() * 900);
+      const appNo = `GV-ADM-2026-${num}`;
+      const newAdm = {
+        id: "ADM-" + Date.now().toString().slice(-4),
+        applicationNo: appNo,
+        studentName: document.getElementById('adm-name').value,
+        applyingClass: document.getElementById('adm-class').value,
+        fatherName: document.getElementById('adm-father').value,
+        guardianMobile: document.getElementById('adm-phone').value,
+        previousMarksPercentage: 85.0,
+        status: "Pending"
+      };
+      cloudStore.admissions.unshift(newAdm);
+      addLog("PARENT_PORTAL", `Submitted online admission for ${newAdm.studentName}`, "Admissions");
+      saveStore();
+      closeModal('modal-online-admission');
+      renderAdmissionsTable();
+      alert(`Application submitted successfully! Your Application Tracking Number is: ${appNo}`);
+    }
+
+    function handleSaveFee(e) {
+      e.preventDefault();
+      const sId = document.getElementById('fee-student-select').value;
+      const s = cloudStore.students.find(x => x.id === sId) || cloudStore.students[0];
+      const paid = Number(document.getElementById('fee-paid').value);
+      const rcp = {
+        id: "FEE-" + Date.now().toString().slice(-4),
+        receiptNo: "GV-RCP-" + Math.floor(1000 + Math.random() * 9000),
+        studentName: s.name,
+        admissionNo: s.admissionNo,
+        className: s.className + '-' + s.section,
+        feeType: document.getElementById('fee-type').value === 'MONTHLY_FEE' ? 'Monthly Tuition Fee' : 'Admission Fee',
+        month: "September 2026",
+        paidAmount: paid,
+        status: "PAID",
+        paymentMode: document.getElementById('fee-mode').value,
+        paymentDate: new Date().toISOString().split('T')[0]
+      };
+      cloudStore.fees.unshift(rcp);
+      addLog("accountant01", "Collected fee ₹" + paid + " for " + s.name, "Fees");
+      saveStore();
+      closeModal('modal-collect-fee');
+      renderFeesTable();
+      alert(`Fee Receipt #${rcp.receiptNo} generated for ${s.name}!`);
+    }
+
+    function deleteStudentWeb(id) {
+      if (!confirm("Are you sure you want to remove this student?")) return;
+      cloudStore.students = cloudStore.students.filter(x => x.id !== id);
+      addLog("admin01", "Removed student ID " + id, "Students");
+      saveStore();
+      renderStudentsTable();
+    }
+
+    function copyShareUrl() {
+      const inp = document.getElementById('share-url-input');
+      navigator.clipboard.writeText(inp.value);
+      alert("Web ERP Link copied to clipboard! You can paste it into Chrome.");
+    }
+
+    function shareViaWhatsApp() {
+      const url = "https://ais-dev-leolcsa2552rk6cwplgzgm-279195101462.asia-southeast1.run.app";
+      const text = encodeURIComponent(`*GREEN VIEW PUBLIC MISSION - ONLINE ERP & ADMISSION PORTAL*\n\nAccess Student Marksheets, Attendance, Online Admission, and Fees on Google Chrome or Mobile App:\n${url}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function toggleSidebar() {
+      const sb = document.getElementById('sidebar');
+      sb.classList.toggle('hidden');
+    }
+
+    function logout() {
+      alert("Logging out from this browser session. Other mobile phone sessions remain logged in.");
+      location.reload();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateDashboardStats();
+    });
+  </script>
+</body>
+</html>
